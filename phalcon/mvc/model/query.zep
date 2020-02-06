@@ -147,6 +147,8 @@ class Query implements QueryInterface, InjectionAwareInterface
 
 	static protected _irPhqlCache;
 
+	protected _usePhqlCache;
+
 	const TYPE_SELECT = 309;
 
 	const TYPE_INSERT = 306;
@@ -163,7 +165,7 @@ class Query implements QueryInterface, InjectionAwareInterface
 	 */
 	public function __construct(phql = null, <DiInterface> dependencyInjector = null, options = null)
 	{
-		var enableImplicitJoins;
+		var enableImplicitJoins, usePhqlCache;
 
 		if typeof phql != "null" {
 			let this->_phql = phql;
@@ -177,6 +179,12 @@ class Query implements QueryInterface, InjectionAwareInterface
 			let this->_enableImplicitJoins = enableImplicitJoins == true;
 		} else {
 			let this->_enableImplicitJoins = globals_get("orm.enable_implicit_joins");
+		}
+
+		if typeof options == "array" && fetch usePhqlCache, options["usePhqlCache"] && typeof usePhqlCache == "boolean" {
+		    let this->_usePhqlCache = usePhqlCache;
+		} else {
+		    let this->_usePhqlCache = true;
 		}
 	}
 
@@ -2536,7 +2544,7 @@ class Query implements QueryInterface, InjectionAwareInterface
 		/**
 		 * Store the prepared AST in the cache
 		 */
-		if typeof uniqueId == "int" {
+		if typeof uniqueId == "int" && this->_usePhqlCache {
 			let self::_irPhqlCache[uniqueId] = irPhql;
 		}
 

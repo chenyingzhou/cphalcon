@@ -157,6 +157,13 @@ class Manager implements ManagerInterface, InjectionAwareInterface, EventsAwareI
 
 	protected _namespaceAliases;
 
+	protected _usePhqlCache;
+
+    public function __construct(boolean usePhqlCache = true) -> void
+    {
+        let this->_usePhqlCache = usePhqlCache;
+    }
+
 	/**
 	 * Sets the DependencyInjector container
 	 */
@@ -1663,7 +1670,7 @@ class Manager implements ManagerInterface, InjectionAwareInterface, EventsAwareI
 	 */
 	public function createQuery(string! phql) -> <QueryInterface>
 	{
-		var dependencyInjector, query;
+		var dependencyInjector, query, options;
 
 		let dependencyInjector = this->_dependencyInjector;
 		if typeof dependencyInjector != "object" {
@@ -1673,7 +1680,8 @@ class Manager implements ManagerInterface, InjectionAwareInterface, EventsAwareI
 		/**
 		 * Create a query
 		 */
-		let query = <QueryInterface> dependencyInjector->get("Phalcon\\Mvc\\Model\\Query", [phql, dependencyInjector]);
+		let options["usePhqlCache"] = this->_usePhqlCache;
+		let query = <QueryInterface> dependencyInjector->get("Phalcon\\Mvc\\Model\\Query", [phql, dependencyInjector, options]);
 		let this->_lastQuery = query;
 		return query;
 	}
