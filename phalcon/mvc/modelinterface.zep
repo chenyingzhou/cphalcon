@@ -155,6 +155,20 @@ interface ModelInterface
 	public static function findFirst(parameters = null);
 
 	/**
+     * Set additional conditions
+     *
+     * @param string additionalConditions
+     */
+	public function setModelAdditionalConditions(string additionalConditions) -> void;
+
+    /**
+     * Returns the additional conditions
+     *
+     * @return string
+     */
+	public function getModelAdditionalConditions() -> string;
+
+	/**
 	 * Create a criteria for a specific model
 	 *
 	 * @param \Phalcon\DiInterface dependencyInjector

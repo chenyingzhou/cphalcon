@@ -129,6 +129,8 @@ abstract class Model implements EntityInterface, ModelInterface, ResultInterface
 
 	const DIRTY_STATE_DETACHED = 2;
 
+	static protected _additionalConditions;
+
 	/**
 	 * Phalcon\Mvc\Model constructor
 	 */
@@ -971,6 +973,39 @@ abstract class Model implements EntityInterface, ModelInterface, ResultInterface
 		return query->execute();
 	}
 
+	/**
+	 * Set additional conditions
+	 *
+	 * @param string additionalConditions
+	 */
+	public function setModelAdditionalConditions(string additionalConditions) -> void
+	{
+		let self::_additionalConditions = additionalConditions;
+	}
+
+	/**
+	 * Returns the additional conditions
+	 *
+	 * @return string
+	 */
+	public function getModelAdditionalConditions() -> string
+	{
+		if empty self::_additionalConditions {
+			return "";
+		}
+		return self::_additionalConditions;
+	}
+
+	private static function attachAdditionalConditions(params) -> array
+	{
+		if typeof params != "array" {
+			let params["conditions"] = params;
+		}
+		if !empty self::_additionalConditions {
+			let params["additionalConditions"] = self::_additionalConditions;
+		}
+		return params;
+	}
 
 	/**
 	 * shared prepare query logic for find and findFirst method
@@ -984,7 +1019,7 @@ abstract class Model implements EntityInterface, ModelInterface, ResultInterface
 		/**
 		 * Builds a query with the passed parameters
 		 */
-		let builder = manager->createBuilder(params);
+		let builder = manager->createBuilder(static::attachAdditionalConditions(params));
 		builder->from(get_called_class());
 
 		if limit != null {
@@ -1247,7 +1282,7 @@ abstract class Model implements EntityInterface, ModelInterface, ResultInterface
 		/**
 		 * Builds a query with the passed parameters
 		 */
-		let builder = manager->createBuilder(params);
+		let builder = manager->createBuilder(static::attachAdditionalConditions(params));
 		builder->columns(columns);
 		builder->from(get_called_class());
 

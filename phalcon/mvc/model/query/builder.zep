@@ -110,7 +110,7 @@ class Builder implements BuilderInterface, InjectionAwareInterface
 			singleConditionArray, limit, offset, fromClause,
 			mergedConditions, mergedParams, mergedTypes,
 			singleCondition, singleParams, singleTypes,
-			distinct, bind, bindTypes;
+			distinct, bind, bindTypes, additionalConditions;
 
 		if typeof params == "array" {
 
@@ -125,11 +125,26 @@ class Builder implements BuilderInterface, InjectionAwareInterface
 				}
 			}
 
+			if typeof this->_conditions == "string" && this->_conditions !== "" {
+				if fetch additionalConditions, params["additionalConditions"] {
+					if likely typeof additionalConditions == "string" && additionalConditions !== "" {
+						let this->_conditions = "(" . this->_conditions . ") AND (" . additionalConditions . ")";
+					}
+				}
+			}
+
 			if typeof conditions == "array" {
 
 				let mergedConditions = [];
 				let mergedParams     = [];
 				let mergedTypes      = [];
+
+				if fetch additionalConditions, params["additionalConditions"] {
+					if likely typeof additionalConditions == "string" && !empty additionalConditions {
+						let mergedConditions[] = additionalConditions;
+					}
+				}
+
 				for singleConditionArray in conditions {
 
 					if typeof singleConditionArray == "array" {
