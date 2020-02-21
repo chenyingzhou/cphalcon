@@ -1034,7 +1034,7 @@ static void php_zephir_init_globals(zend_phalcon_globals *phalcon_globals TSRMLS
 	
 
 	phalcon_globals->orm.ast_cache = NULL;
-	phalcon_globals->orm.cache_level = 3;
+	phalcon_globals->orm.cache_level = -1;
 
 
 
